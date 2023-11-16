@@ -78,7 +78,7 @@ class HealthManager:ObservableObject{
         }
         healthStore.execute(query)
     }
-    /*code to fix
+    /*
      func processDataSleep() {
         let sleepType = HKCategoryTypeIdentifier.sleepAnalysis
         let endDate = Date()
