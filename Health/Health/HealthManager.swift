@@ -37,6 +37,7 @@ class HealthManager:ObservableObject{
                 try await  healthStore.requestAuthorization(toShare: [], read: healthTypes)
                 fetchTodaySteps()
                 fetchTodayCalories()
+                processDataLastNightSleep()
             } catch{
                 print("couldn't get \(healthTypes) permission")
             }
@@ -78,28 +79,53 @@ class HealthManager:ObservableObject{
         }
         healthStore.execute(query)
     }
-    /*
-     func processDataSleep() {
+
+    func processDataLastNightSleep() {
         let sleepType = HKCategoryTypeIdentifier.sleepAnalysis
-        let endDate = Date()
-        let startDate = Calendar.current.date(byAdding: .day, value: -7, to: endDate)!
-        
+
+        // Get the current date and time
+        let currentDate = Date()
+
+        // Set the end date to the start of the current day
+        let endDate = Calendar.current.startOfDay(for: currentDate)
+
+        // Set the start date to the start of the day before the current day
+        let startDate = Calendar.current.date(byAdding: .day, value: -1, to: endDate)!
+
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
-        
-        let sleepQuery = HKCategoryQuery(quantityType: HKObjectType.categoryType(forIdentifier: sleepType)!, predicate: predicate) { _, results, error in
+
+        let sleepQuery = HKSampleQuery(sampleType: HKObjectType.categoryType(forIdentifier: sleepType)!, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { _, results, error in
             guard error == nil else {
-                print("couldn't get sleepDatas")
+                print("Couldn't get sleepDatas: \(error!.localizedDescription)")
                 return
             }
-            
-            if let quantitySamples = results?.quantitySamples {
-                let sleepCategoryValues = quantitySamples.map { $0.value }
-                let sleepCategoryCount = sleepCategoryValues.reduce(0, +)
-                print("Total asleep time: \(sleepCategoryCount) hours")
+
+            if let sample = results?.first as? HKCategorySample {
+                print("Last Night's Sleep Sample Details:")
+                print("Start Date: \(sample.startDate)")
+                print("End Date: \(sample.endDate)")
+                print("Value: \(sample.value)")
+
+                let sleepDuration = sample.endDate.timeIntervalSince(sample.startDate)
+                let sleepDurationComponents = DateComponents(hour: 0, minute: Int(sleepDuration / 60))
+                let formatter = DateComponentsFormatter()
+                formatter.unitsStyle = .positional
+                formatter.allowedUnits = [.hour, .minute]
+                guard let formattedDuration = formatter.string(from: sleepDurationComponents) else {
+                    print("Error formatting sleep duration")
+                    return
+                }
+                print("Last night's sleep duration: \(formattedDuration)")
+
+                let activity = Activity(id: 2, title: "Sleep", subtitle: "Goal: 8hrs", image: " ", amount: formattedDuration)
+                DispatchQueue.main.async {
+                    self.activities["Sleep"] = activity
+                }
             }
         }
         healthStore.execute(sleepQuery)
-    }*/
+    }
+
 }
 
     
