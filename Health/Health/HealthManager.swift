@@ -30,14 +30,15 @@ class HealthManager:ObservableObject{
         let calories=HKQuantityType(.activeEnergyBurned)
         let steps=HKQuantityType(.stepCount)
         let sleepSampleType = HKCategoryType(.sleepAnalysis)
-        
-        let healthTypes:Set=[steps,calories,sleepSampleType]
+        let audioSampleType=HKCategoryType(.headphoneAudioExposureEvent)
+        let healthTypes:Set=[steps,calories,sleepSampleType,audioSampleType]
         Task{
             do{
                 try await  healthStore.requestAuthorization(toShare: [], read: healthTypes)
                 fetchTodaySteps()
                 fetchTodayCalories()
                 processDataLastNightSleep()
+                fetchAudioDatas()
             } catch{
                 print("couldn't get \(healthTypes) permission")
             }
@@ -54,7 +55,7 @@ class HealthManager:ObservableObject{
                 return
             }
             let stepsCount=quantity.doubleValue(for: .count())
-            let activity=Activity(id: 0, title: "steps", subtitle: "Goal:10,000", image: "figure.walk", amount: stepsCount.formattedString())
+            let activity=Activity(id: 0, title: "steps", subtitle: "Goal:10,000", image:"figure.walk", amount: stepsCount.formattedString())
             DispatchQueue.main.async{
                 self.activities["steps"]=activity
             }
@@ -117,9 +118,53 @@ class HealthManager:ObservableObject{
                 }
                 print("Last night's sleep duration: \(formattedDuration)")
 
-                let activity = Activity(id: 2, title: "Sleep", subtitle: "Goal: 8hrs", image: " ", amount: formattedDuration)
+                let activity = Activity(id: 2, title: "Sleep", subtitle: "Goal: 8hrs", image: "bed.double", amount: formattedDuration)
                 DispatchQueue.main.async {
                     self.activities["Sleep"] = activity
+                }
+            }
+        }
+        healthStore.execute(sleepQuery)
+    }
+    
+    func fetchAudioDatas(){
+        let AudioType = HKCategoryTypeIdentifier.headphoneAudioExposureEvent
+        let currentDate = Date()
+
+        // Set the end date to the start of the current day
+        let endDate = Calendar.current.startOfDay(for: currentDate)
+
+        // Set the start date to the start of the day before the current day
+        let startDate = Calendar.current.date(byAdding: .day, value: -1, to: endDate)!
+
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+
+        let sleepQuery = HKSampleQuery(sampleType: HKObjectType.categoryType(forIdentifier: .headphoneAudioExposureEvent)!, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { _, results, error in
+            guard error == nil else {
+                print("Couldn't get AudioDatas: \(error!.localizedDescription)")
+                return
+            }
+
+            if let sample = results?.first as? HKCategorySample {
+                print("Audio Datas Sample Details:")
+                print("Start Date: \(sample.startDate)")
+                print("End Date: \(sample.endDate)")
+                print("Value: \(sample.value)")
+
+                let analysisDuration = sample.endDate.timeIntervalSince(sample.startDate)
+                let analysisDurationComponents = DateComponents(hour: 0, minute: Int(analysisDuration / 60))
+                let formatter = DateComponentsFormatter()
+                formatter.unitsStyle = .positional
+                formatter.allowedUnits = [.hour, .minute]
+                guard let formattedDuration = formatter.string(from: analysisDurationComponents) else {
+                    print("Error formatting analysis duration")
+                    return
+                }
+                print("analysis duration: \(formattedDuration)")
+
+                let activity = Activity(id: 3, title: "audio", subtitle: " Goal:40%", image: "headphones", amount: formattedDuration)
+                DispatchQueue.main.async {
+                    self.activities["audio"] = activity
                 }
             }
         }

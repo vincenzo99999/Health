@@ -17,12 +17,20 @@ struct ActivityCard:View {
                     RoundedRectangle(cornerSize: /*@START_MENU_TOKEN@*/CGSize(width: 20, height: 10)/*@END_MENU_TOKEN@*/, style: /*@START_MENU_TOKEN@*/.continuous/*@END_MENU_TOKEN@*/).frame(width:350,height: 200).foregroundColor(.gray).padding()
 
                     HStack(alignment:.top) {
-                    
-                        Text(activity.title).font(.system(size: 16)).padding(30)
-                        Spacer()
-                        Text(activity.amount).font(.system(size:12)).foregroundColor(.black
-                            ).padding()
-                        Image(activity.image).foregroundColor(.blue).padding(30)
+                        VStack{
+                            HStack{
+                                Text(activity.title+":").font(.title)
+                                Text(activity.amount).font(.title).foregroundColor(.black
+                                ).padding()
+                                Image(systemName:activity.image).foregroundColor(.red)
+
+                            }
+                                Text(activity.subtitle).font(.subheadline).foregroundColor(.black
+                                ).padding()
+
+                            }
+                            
+
                     }
                 }
                 
