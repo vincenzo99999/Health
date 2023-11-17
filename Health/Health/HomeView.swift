@@ -1,23 +1,20 @@
-//
-//  HomeView.swift
-//  Health
-//
-//  Created by Vincenzo Eboli on 15/11/23.
-//
-
 import Foundation
 import SwiftUI
 
-struct HomeView:View {
-    @EnvironmentObject var manager:HealthManager
+struct HomeView: View {
+    @EnvironmentObject var manager: HealthManager
+
+    let gridItemLayout = [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)]
+
     var body: some View {
-        VStack{
-            LazyHGrid(rows:Array(repeating: GridItem(spacing:20),count:3)){
-                ForEach(manager.activities.sorted(by:{ $0.value.id < $1.value.id}),id:  \.key){item in
+        VStack {
+            LazyHGrid(rows: gridItemLayout, spacing: 15) {
+                ForEach(manager.activities.sorted(by: { $0.value.id < $1.value.id }), id: \.key) { item in
                     ActivityCard(activity: item.value)
-                    }
                 }
-            .padding()
+            }
+            .padding(15)
+            Spacer()
         }
     }
 }
