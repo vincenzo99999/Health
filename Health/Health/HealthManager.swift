@@ -15,11 +15,17 @@ extension Date {
     static var startOfTheDay: Date {
         Calendar.current.startOfDay(for: Date())
     }
+    static var oneMonthAgo:Date{
+        let calendar=Calendar.current
+        let oneMonth=Calendar.current.date(byAdding: .month, value: -1,to: Date())
+        return calendar.startOfDay(for: oneMonth!)
+    }
 }
-
 class HealthManager: ObservableObject {
     @Published var activities: [String: Activity] = [:]
     @Published var mockActivities: [String:Activity]=[:]
+    @Published var oneMonthChartData=[DailyStepView]()
+    @Published var oneMonthChartCaloriesData=[DailyCaloriesView]()
     let healthStore = HKHealthStore()
     
     init() {
@@ -28,14 +34,15 @@ class HealthManager: ObservableObject {
         let sleepSampleType = HKCategoryType(.sleepAnalysis)
         let audioSampleType = HKCategoryType(.headphoneAudioExposureEvent)
         let healthTypes: Set = [steps, calories, sleepSampleType, audioSampleType]
-   
+        
         Task {
             do {
                 try await healthStore.requestAuthorization(toShare: [], read: healthTypes)
                 fetchTodaySteps()
                 fetchTodayCalories()
-                processDataLastNightSleep()
-                processHeadphoneExposureWithGoal()
+                fetchLastNightSleep()
+                fetchPastOneMonthCaloriesData()
+                fetchPastOneMonthStepData()
             } catch {
                 print("Couldn't get \(healthTypes) permission")
             }
@@ -84,98 +91,130 @@ class HealthManager: ObservableObject {
         healthStore.execute(query)
     }
     
-    func processDataLastNightSleep() {
-        let sleepType = HKCategoryTypeIdentifier.sleepAnalysis
-        let currentDate = Date()
-        let endDate = Calendar.current.startOfDay(for: currentDate)
-        let startDate = Calendar.current.date(byAdding: .day, value: -1, to: endDate)!
+    
+    
+    func fetchLastNightSleep() {
+        let sleepType = HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!
         
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+        let oggi = Calendar.current.startOfDay(for: Date())
+        guard let ieri = Calendar.current.date(byAdding: .day, value: -1, to: oggi) else {
+            print("Errore nel calcolare la data della scorsa notte.")
+            return
+        }
         
-        let sleepQuery = HKSampleQuery(sampleType: HKObjectType.categoryType(forIdentifier: sleepType)!, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { _, results, error in
-            guard error == nil else {
-                print("Couldn't get sleep data: \(error!.localizedDescription)")
+        print("Start Date: \(ieri)")
+        print("End Date: \(oggi)")
+        
+        // Predicato per ottenere i dati di sonno dalla scorsa notte
+        let predicate = HKQuery.predicateForSamples(withStart: oggi, end: Date(), options: .strictStartDate)
+        let query = HKSampleQuery(sampleType: sleepType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { (_, results, error) in
+            guard let samples = results as? [HKCategorySample], error == nil else {
+                print("Errore nel recupero dei dati di sonno: \(String(describing: error))")
                 return
             }
             
-            if let sample = results?.first as? HKCategorySample {
-                print("Last Night's Sleep Sample Details:")
-                print("Start Date: \(sample.startDate)")
-                print("End Date: \(sample.endDate)")
-                print("Value: \(sample.value)")
-                
-                let sleepDuration = sample.endDate.timeIntervalSince(sample.startDate)
-                let sleepDurationComponents = DateComponents(hour: 0, minute: Int(sleepDuration / 60))
-                let formatter = DateComponentsFormatter()
-                formatter.unitsStyle = .positional
-                formatter.allowedUnits = [.hour, .minute]
-                guard let formattedDuration = formatter.string(from: sleepDurationComponents) else {
-                    print("Error formatting sleep duration")
-                    return
-                }
-                print("Last night's sleep duration: \(formattedDuration)")
-                
-                let activity = Activity(id: 2, title: "Sleep", subtitle: "Goal: 8hrs", image: "bed.double", amount: formattedDuration)
-                let mockActivity = Activity(id: 2, title: "Sleep", subtitle: "Goal: 8hrs", image: "bed.double", amount:"5 hrs")
-                DispatchQueue.main.async {
-                    self.activities["Sleep"] = activity
-                    self.mockActivities["Sleep"]=mockActivity
+            // Print information about the retrieved samples
+            print("Number of samples retrieved: \(samples.count)")
+            for sample in samples {
+                print("Sample Start Date: \(sample.startDate), End Date: \(sample.endDate), Value: \(sample.value)")
+            }
+            
+            // Calcola le ore di sonno
+            let oreDormite = samples.reduce(into: 8) { acc, sample in
+                if sample.value == HKCategoryValueSleepAnalysis.asleep.rawValue {
+                    let inBedStart = max(sample.startDate, ieri)
+                    let inBedEnd = min(sample.endDate, oggi)
+                    acc += Int(inBedEnd.timeIntervalSince(inBedStart)) / 3600
                 }
             }
+            
+            print("Ore di sonno della scorsa notte: \(oreDormite) hours")
+            
+            let activity = Activity(id: 2, title: "Sleep", subtitle: "Last Night", image: "moon", amount: "\(oreDormite) hours")
+            DispatchQueue.main.async {
+                self.activities["Sleep"] = activity
+            }
         }
-        healthStore.execute(sleepQuery)
+        healthStore.execute(query)
     }
-    
-    func processHeadphoneExposureWithGoal() {
-        guard HKHealthStore.isHealthDataAvailable() else {
-            print("Health data not available")
-            return
-        }
+    func fetchDailyCalories(startDate: Date, endDate: Date, completion: @escaping ([DailyCaloriesView]) -> Void) {
+        let caloriesType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
+        let interval = DateComponents(day: 1)
 
-        let audioExposureType = HKObjectType.categoryType(forIdentifier: HKCategoryTypeIdentifier.environmentalAudioExposureEvent)!
-        let authorized = healthStore.authorizationStatus(for: audioExposureType) == .sharingAuthorized
+        let query = HKStatisticsCollectionQuery(
+            quantityType: caloriesType,
+            quantitySamplePredicate: nil,
+            anchorDate: startDate,
+            intervalComponents: interval
+        )
 
-        guard authorized else {
-            print("Audio exposure data not authorized")
-            return
-        }
-
-        let currentDate = Date()
-        let endDate = Calendar.current.startOfDay(for: currentDate)
-        let startDate = Calendar.current.date(byAdding: .day, value: -1, to: endDate)!
-
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
-
-        let headphoneExposureQuery = HKSampleQuery(sampleType: audioExposureType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]) { _, results, error in
-            guard error == nil else {
-                print("Couldn't get headphone exposure data: \(error!.localizedDescription)")
+        query.initialResultsHandler = { query, result, error in
+            guard let result = result else {
+                completion([])
                 return
             }
 
-            if let samples = results as? [HKCategorySample] {
-                for sample in samples {
-                    print("Audio Exposure Sample:")
-                    print("Start Date: \(sample.startDate)")
-                    print("End Date: \(sample.endDate)")
-                    print("Value: \(sample.value)")
+            var dailyCalories = [DailyCaloriesView]()
 
-                    let exposureDuration = sample.endDate.timeIntervalSince(sample.startDate)
-                    let safeExposureLimit = 4 * 60 * 60.0
-                    let exposurePercentage = min((exposureDuration / safeExposureLimit) * 100, 100.0)
-
-                    print("Headphone exposure duration: \(exposureDuration) seconds")
-                    let activityKey = "Headphone Exposure" // Chiave corretta per l'attività di esposizione dell'audio
-                    let activity = Activity(id: 4, title: "Headphone Exposure", subtitle: "Goal: \(Int(exposurePercentage))%", image: "headphones", amount: "\(Int(exposurePercentage))%")
-                    let mockActivity = Activity(id: 4, title: "Headphone Exposure", subtitle: "Goal: \(Int(exposurePercentage))%", image: "headphones", amount: "\(Int(exposurePercentage))%")
-
-                    DispatchQueue.main.async {
-                        self.activities[activityKey] = activity
-                        self.mockActivities[activityKey] = mockActivity
-                    }
-                }
+            result.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
+                let caloriesCount1 = statistics.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0.0
+                let dailyCalorie = DailyCaloriesView(date: statistics.startDate, caloriesCount: caloriesCount1)
+                dailyCalories.append(dailyCalorie)
             }
+            completion(dailyCalories)
         }
-        healthStore.execute(headphoneExposureQuery)
+
+        healthStore.execute(query)
     }
 
+    func fetchDailySteps(startDate: Date, endDate: Date, completion: @escaping ([DailyStepView]) -> Void) {
+            let steps = HKQuantityType(.stepCount)
+            let interval = DateComponents(day: 1)
+
+            let query = HKStatisticsCollectionQuery(
+                quantityType: steps,
+                quantitySamplePredicate: nil,
+                anchorDate: startDate,
+                intervalComponents: interval
+            )
+
+            query.initialResultsHandler = { query, result, error in
+                guard let result = result else {
+                    completion([])
+                    return
+                }
+
+                var dailySteps = [DailyStepView]()
+
+                result.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
+                    let stepCount = statistics.sumQuantity()?.doubleValue(for:.count()) ?? 0.0
+                    let dailyStep = DailyStepView(date: statistics.startDate, stepCount: stepCount)
+                    dailySteps.append(dailyStep)
+                }
+
+                completion(dailySteps)
+            }
+
+            healthStore.execute(query)
+        }
+    func fetchPastOneMonthCaloriesData() {
+        let startDate = Date.oneMonthAgo
+        let endDate = Date()
+
+        fetchDailyCalories(startDate: startDate, endDate: endDate) { dailyCalories in
+            DispatchQueue.main.async {
+                self.oneMonthChartCaloriesData = dailyCalories
+            }
+        }
+    }
+}
+
+extension HealthManager{
+    func fetchPastOneMonthStepData(){
+        fetchDailySteps(startDate: .oneMonthAgo, endDate: Date()){ dailySteps in
+            DispatchQueue.main.async{
+                self.oneMonthChartData=dailySteps
+            }
+        }
+    }
 }

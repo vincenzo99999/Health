@@ -12,6 +12,8 @@
 		545FD9F92B07C07D00716C3F /* stepsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545FD9F82B07C07D00716C3F /* stepsView.swift */; };
 		545FD9FD2B07C8D800716C3F /* caloriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545FD9FC2B07C8D800716C3F /* caloriesView.swift */; };
 		545FD9FF2B07C91400716C3F /* sleepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545FD9FE2B07C91400716C3F /* sleepView.swift */; };
+		546BF7532B0BB12A007E9261 /* CaloriesChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546BF7522B0BB12A007E9261 /* CaloriesChartView.swift */; };
+		5496F71D2B0B66F800AAA9BC /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5496F71C2B0B66F800AAA9BC /* ChartView.swift */; };
 		54AB93632B02BA8800026DA0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AB93622B02BA8800026DA0 /* ContentView.swift */; };
 		54AB93672B02BA8900026DA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 54AB93662B02BA8900026DA0 /* Assets.xcassets */; };
 		54AB936A2B02BA8900026DA0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 54AB93692B02BA8900026DA0 /* Preview Assets.xcassets */; };
@@ -27,6 +29,8 @@
 		545FD9F82B07C07D00716C3F /* stepsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = stepsView.swift; sourceTree = "<group>"; };
 		545FD9FC2B07C8D800716C3F /* caloriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = caloriesView.swift; sourceTree = "<group>"; };
 		545FD9FE2B07C91400716C3F /* sleepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sleepView.swift; sourceTree = "<group>"; };
+		546BF7522B0BB12A007E9261 /* CaloriesChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaloriesChartView.swift; sourceTree = "<group>"; };
+		5496F71C2B0B66F800AAA9BC /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		54AB935D2B02BA8800026DA0 /* Health.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Health.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		54AB93622B02BA8800026DA0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; usesTabs = 0; };
 		54AB93662B02BA8900026DA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -50,6 +54,8 @@
 		54AB93542B02BA8800026DA0 = {
 			isa = PBXGroup;
 			children = (
+				546BF7522B0BB12A007E9261 /* CaloriesChartView.swift */,
+				5496F71C2B0B66F800AAA9BC /* ChartView.swift */,
 				54AB935F2B02BA8800026DA0 /* Health */,
 				54AB935E2B02BA8800026DA0 /* Products */,
 			);
@@ -163,6 +169,8 @@
 				54AB93632B02BA8800026DA0 /* ContentView.swift in Sources */,
 				544279552B0511EF001BF50F /* HealthManager.swift in Sources */,
 				54E9EF152B050993004BA61B /* ActivityCard.swift in Sources */,
+				546BF7532B0BB12A007E9261 /* CaloriesChartView.swift in Sources */,
+				5496F71D2B0B66F800AAA9BC /* ChartView.swift in Sources */,
 				54E9EF132B050807004BA61B /* HealthTabView.swift in Sources */,
 				545FD9F92B07C07D00716C3F /* stepsView.swift in Sources */,
 				545FD9FF2B07C91400716C3F /* sleepView.swift in Sources */,

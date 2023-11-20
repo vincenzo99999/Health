@@ -7,9 +7,10 @@ struct Activity{
     let amount:String
 }
 struct ActivityCard: View {
+    @State private var weeklyStepCounts: [Date: Int] = [:]
     @State var activity: Activity
     @State private var isDetailViewPresented = false 
-    
+    @EnvironmentObject var manager : HealthManager
     var body: some View {
         VStack {
             HStack(alignment: .top, spacing: 5) {
@@ -43,11 +44,14 @@ struct ActivityCard: View {
             }
         }
         .fullScreenCover(isPresented: $isDetailViewPresented) {
+
             if activity.id==0{
-                stepsView(activity: activity)
+
+                    StepsView(activity: activity)
+
             }
             if activity.id==1{
-                caloriesView(activity: activity)
+                CaloriesView(activity: activity)
             }
             if activity.id==2{
                 sleepView(activity: activity)
