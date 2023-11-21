@@ -26,33 +26,27 @@ struct CaloriesView: View {
                 .navigationBarHidden(true)
         
                 ZStack {
-                    Rectangle()
-                        .frame(width: 400, height: 500)
-                    TabView(selection: $selectedCharter,
-                            content:  {
-                        Text("1W").tabItem { CaloriesChartView() }.tag(1)
-                        Text("1M").tabItem { CaloriesChartView() }.tag(2)
-                    })
-                    VStack (alignment: .leading){
-                        HStack {
-                            Text("\(activity.title)")
-                                .font(.title)
-                                .foregroundColor(.white)
-                                .padding()
-
-                            Image(systemName: activity.image)
-                                .foregroundColor(.red)
+                    Rectangle().frame(width: 400, height: 500)
+                    VStack {
+                        Picker(selection: $selectedCharter, label: Text("")) {
+                            Text("1w").tag(ChartOptions.oneWeek)
+                            Text("1m").tag(ChartOptions.oneMonth)
+                            Text("ytd").tag(ChartOptions.oneYear)
                         }
-
-                        HStack {
-                            Text("\(activity.amount)\t")
-                                .foregroundColor(.white)
-                            Text("\(activity.subtitle)")
-                                .foregroundColor(.white)
-                        }
-
+                        .padding()
+                        .pickerStyle(.segmented)
                         
+                        
+                        TabView(selection: $selectedCharter){
+                            CaloriesChartView(selectedCharter: .oneWeek)
+                                .scaledToFit().tag(ChartOptions.oneWeek)
+                            CaloriesChartView(selectedCharter: .oneMonth).scaledToFit().tag(ChartOptions.oneMonth)
+                            
+                            CaloriesChartView(selectedCharter: .oneYear).tag(ChartOptions.oneYear)
+                        }
+                            
                     }
+                    .navigationBarBackButtonHidden()
                 }
             }
         }

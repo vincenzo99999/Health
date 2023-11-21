@@ -33,6 +33,10 @@ struct ChartView:View {
                     ForEach(manager.pastWeekChartStepData){daily in
                         BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount))}
                 }
+                if(selectedCharter == .oneYear){
+                    ForEach(manager.pastYTDChartStepData){daily in
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount))}
+                }
             }.padding().scaledToFit()
         }
         

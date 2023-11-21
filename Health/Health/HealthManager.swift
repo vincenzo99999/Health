@@ -25,6 +25,11 @@ extension Date {
         let pastWeek=Calendar.current.date(byAdding: .day, value: -7,to: Date())
         return calendar.startOfDay(for: pastWeek!)
     }
+    static var YTD:Date{
+        let calendar=Calendar.current
+        let YTD=Calendar.current.date(byAdding: .month, value: -12 ,to: Date())
+        return calendar.startOfDay(for: YTD!)
+    }
 }
 class HealthManager: ObservableObject {
     @Published var activities: [String: Activity] = [:]
@@ -33,6 +38,9 @@ class HealthManager: ObservableObject {
     @Published var oneMonthChartCaloriesData=[DailyCaloriesView]()
     @Published var pastWeekChartCaloriesData=[DailyCaloriesView]()
     @Published var pastWeekChartStepData=[DailyStepView]()
+    @Published var pastYTDChartStepData=[DailyStepView]()
+    @Published var pastYTDChartCaloriesData=[DailyCaloriesView]()
+
     
     let healthStore = HKHealthStore()
     
@@ -54,6 +62,8 @@ class HealthManager: ObservableObject {
                 fetchPastOneMonthStepData()
                 fetchPastWeekStepData()
                 fetchPastWeekCaloriesData()
+                fetchYTDStepData()
+                fetchYTDCaloriesData()
             } catch {
                 print("Couldn't get \(healthTypes) permission")
             }
@@ -241,8 +251,30 @@ class HealthManager: ObservableObject {
             DispatchQueue.main.async{
                 self.pastWeekChartStepData=dailySteps
             }
+        
         }
     }
+    func fetchYTDStepData(){
+        fetchDailySteps(startDate: .YTD, endDate: Date()){ dailySteps in
+            DispatchQueue.main.async{
+                self.pastYTDChartStepData=dailySteps
+            }
+        
+        }
+    }
+    func fetchYTDCaloriesData(){
+        let startDate = Date.YTD
+        let endDate = Date()
+        
+        fetchDailyCalories(startDate: startDate, endDate: endDate) { dailyCalories in
+            DispatchQueue.main.async {
+                self.pastYTDChartCaloriesData = dailyCalories
+            }
+        }
+        
+    }
+
+
 }
 
 

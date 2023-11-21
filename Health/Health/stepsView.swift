@@ -34,9 +34,9 @@ struct StepsView: View {
                     Rectangle().frame(width: 400, height: 500)
                     VStack {
                         Picker(selection: $selectedCharter, label: Text("")) {
-                            Text("1w").tag(0)
-                            Text("1m").tag(1)
-                            Text("ytd").tag(2)
+                            Text("1w").tag(ChartOptions.oneWeek)
+                            Text("1m").tag(ChartOptions.oneMonth)
+                            Text("ytd").tag(ChartOptions.oneYear)
                         }
                         .padding()
                         .pickerStyle(.segmented)
@@ -44,10 +44,10 @@ struct StepsView: View {
                         
                         TabView(selection: $selectedCharter){
                             ChartView(selectedCharter: .oneWeek)
-                                .scaledToFit().tag(0)
-                            ChartView(selectedCharter: .oneMonth).scaledToFit().tag(1)
+                                .scaledToFit().tag(ChartOptions.oneWeek)
+                            ChartView(selectedCharter: .oneMonth).scaledToFit().tag(ChartOptions.oneMonth)
                             
-                                Text("placeholder").tag(2)
+                            ChartView(selectedCharter: .oneYear).tag(ChartOptions.oneYear)
                         }
                             
                     }

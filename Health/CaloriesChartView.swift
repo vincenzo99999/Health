@@ -25,7 +25,11 @@ struct CaloriesChartView: View {
                     }
 
                 }
-                
+                if(selectedCharter == .oneYear){
+                    ForEach(manager.pastYTDChartCaloriesData) { daily in
+                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount))
+                    }
+                }
             }.foregroundColor(.black)
                 .padding(.horizontal).scaledToFit()
                 
