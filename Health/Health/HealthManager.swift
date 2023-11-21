@@ -20,12 +20,20 @@ extension Date {
         let oneMonth=Calendar.current.date(byAdding: .month, value: -1,to: Date())
         return calendar.startOfDay(for: oneMonth!)
     }
+    static var pastWeek:Date{
+        let calendar=Calendar.current
+        let pastWeek=Calendar.current.date(byAdding: .day, value: -7,to: Date())
+        return calendar.startOfDay(for: pastWeek!)
+    }
 }
 class HealthManager: ObservableObject {
     @Published var activities: [String: Activity] = [:]
     @Published var mockActivities: [String:Activity]=[:]
     @Published var oneMonthChartData=[DailyStepView]()
     @Published var oneMonthChartCaloriesData=[DailyCaloriesView]()
+    @Published var pastWeekChartCaloriesData=[DailyCaloriesView]()
+    @Published var pastWeekChartStepData=[DailyStepView]()
+    
     let healthStore = HKHealthStore()
     
     init() {
@@ -41,8 +49,11 @@ class HealthManager: ObservableObject {
                 fetchTodaySteps()
                 fetchTodayCalories()
                 fetchLastNightSleep()
+                self.activities["audio Exposure"]=Activity(id:4,title: "Audio exposure",subtitle: "Goal:30%",image: "headphones",amount: "50%")
                 fetchPastOneMonthCaloriesData()
                 fetchPastOneMonthStepData()
+                fetchPastWeekStepData()
+                fetchPastWeekCaloriesData()
             } catch {
                 print("Couldn't get \(healthTypes) permission")
             }
@@ -140,22 +151,22 @@ class HealthManager: ObservableObject {
     func fetchDailyCalories(startDate: Date, endDate: Date, completion: @escaping ([DailyCaloriesView]) -> Void) {
         let caloriesType = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned)!
         let interval = DateComponents(day: 1)
-
+        
         let query = HKStatisticsCollectionQuery(
             quantityType: caloriesType,
             quantitySamplePredicate: nil,
             anchorDate: startDate,
             intervalComponents: interval
         )
-
+        
         query.initialResultsHandler = { query, result, error in
             guard let result = result else {
                 completion([])
                 return
             }
-
+            
             var dailyCalories = [DailyCaloriesView]()
-
+            
             result.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
                 let caloriesCount1 = statistics.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0.0
                 let dailyCalorie = DailyCaloriesView(date: statistics.startDate, caloriesCount: caloriesCount1)
@@ -163,53 +174,50 @@ class HealthManager: ObservableObject {
             }
             completion(dailyCalories)
         }
-
+        
         healthStore.execute(query)
     }
-
+    
     func fetchDailySteps(startDate: Date, endDate: Date, completion: @escaping ([DailyStepView]) -> Void) {
-            let steps = HKQuantityType(.stepCount)
-            let interval = DateComponents(day: 1)
-
-            let query = HKStatisticsCollectionQuery(
-                quantityType: steps,
-                quantitySamplePredicate: nil,
-                anchorDate: startDate,
-                intervalComponents: interval
-            )
-
-            query.initialResultsHandler = { query, result, error in
-                guard let result = result else {
-                    completion([])
-                    return
-                }
-
-                var dailySteps = [DailyStepView]()
-
-                result.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
-                    let stepCount = statistics.sumQuantity()?.doubleValue(for:.count()) ?? 0.0
-                    let dailyStep = DailyStepView(date: statistics.startDate, stepCount: stepCount)
-                    dailySteps.append(dailyStep)
-                }
-
-                completion(dailySteps)
+        let steps = HKQuantityType(.stepCount)
+        let interval = DateComponents(day: 1)
+        
+        let query = HKStatisticsCollectionQuery(
+            quantityType: steps,
+            quantitySamplePredicate: nil,
+            anchorDate: startDate,
+            intervalComponents: interval
+        )
+        
+        query.initialResultsHandler = { query, result, error in
+            guard let result = result else {
+                completion([])
+                return
             }
-
-            healthStore.execute(query)
+            
+            var dailySteps = [DailyStepView]()
+            
+            result.enumerateStatistics(from: startDate, to: endDate) { statistics, _ in
+                let stepCount = statistics.sumQuantity()?.doubleValue(for:.count()) ?? 0.0
+                let dailyStep = DailyStepView(date: statistics.startDate, stepCount: stepCount)
+                dailySteps.append(dailyStep)
+            }
+            
+            completion(dailySteps)
         }
+        
+        healthStore.execute(query)
+    }
     func fetchPastOneMonthCaloriesData() {
         let startDate = Date.oneMonthAgo
         let endDate = Date()
-
+        
         fetchDailyCalories(startDate: startDate, endDate: endDate) { dailyCalories in
             DispatchQueue.main.async {
                 self.oneMonthChartCaloriesData = dailyCalories
             }
         }
     }
-}
-
-extension HealthManager{
     func fetchPastOneMonthStepData(){
         fetchDailySteps(startDate: .oneMonthAgo, endDate: Date()){ dailySteps in
             DispatchQueue.main.async{
@@ -217,4 +225,24 @@ extension HealthManager{
             }
         }
     }
+    func fetchPastWeekCaloriesData(){
+        let startDate = Date.pastWeek
+        let endDate = Date()
+        
+        fetchDailyCalories(startDate: startDate, endDate: endDate) { dailyCalories in
+            DispatchQueue.main.async {
+                self.pastWeekChartCaloriesData = dailyCalories
+            }
+        }
+        
+    }
+    func fetchPastWeekStepData(){
+        fetchDailySteps(startDate: .pastWeek, endDate: Date()){ dailySteps in
+            DispatchQueue.main.async{
+                self.pastWeekChartStepData=dailySteps
+            }
+        }
+    }
 }
+
+

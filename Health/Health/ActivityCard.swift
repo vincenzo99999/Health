@@ -19,9 +19,8 @@ struct ActivityCard: View {
                         .frame(width: 300)
                         .foregroundColor(.gray)
                         .onTapGesture {
-                            isDetailViewPresented.toggle() // Attiva il flag quando l'utente tocca la card
+                            isDetailViewPresented.toggle()
                         }
-
                     HStack(alignment: .top) {
                         VStack(alignment: .leading) {
                             HStack {
@@ -39,10 +38,16 @@ struct ActivityCard: View {
                                 .foregroundColor(.black)
                                 .padding()
                         }
+                        if(activity.id==0){
+                            ChartView(selectedCharter: .oneWeek).frame(width:100,height: 150).scaledToFit()
+                        }
+                        if(activity.id==1){
+                            CaloriesChartView().frame(width:100,height: 150).scaledToFit()
+                        }
                     }
                 }
             }
-        }
+        }.scaledToFill()
         .fullScreenCover(isPresented: $isDetailViewPresented) {
 
             if activity.id==0{

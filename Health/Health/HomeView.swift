@@ -4,7 +4,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var manager: HealthManager
 
-    let gridItemLayout = [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)]
+    let gridItemLayout = [GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15), GridItem(.flexible(), spacing: 15)]
 
     var body: some View {
         VStack {

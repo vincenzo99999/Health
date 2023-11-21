@@ -8,28 +8,27 @@ struct DailyCaloriesView:Identifiable{
 }
 
 struct CaloriesChartView: View {
-    @State private var selectedCharter: ChartOptions = .oneMonth
+    @State var selectedCharter: ChartOptions = .oneWeek
     @EnvironmentObject var manager: HealthManager
 
     var body: some View {
         VStack {
             Chart {
-                ForEach(manager.oneMonthChartCaloriesData) { daily in
-                    BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount))
+                if (selectedCharter == .oneMonth){
+                    ForEach(manager.oneMonthChartCaloriesData) { daily in
+                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount))
+                    }
                 }
-            }.foregroundColor(.black)
-            .frame(height: 350)
-            .padding()
+                if (selectedCharter == .oneWeek){
+                    ForEach(manager.pastWeekChartCaloriesData) { daily in
+                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount))
+                    }
 
-            HStack {
-                Button("1M") {
-                    selectedCharter = .oneMonth
                 }
-                .padding(.all)
+                
+            }.foregroundColor(.black)
+                .padding(.horizontal).scaledToFit()
+                
             }
-            .onAppear {
-                print(manager.oneMonthChartCaloriesData)
             }
         }
-    }
-}

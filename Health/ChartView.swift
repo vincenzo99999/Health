@@ -17,23 +17,25 @@ struct DailyStepView:Identifiable{
 enum ChartOptions{
     case oneWeek
     case oneMonth
-    case oneYwar
+    case oneYear
 }
 struct ChartView:View {
-    @State var selectedCharter :ChartOptions = .oneMonth
+    @State var selectedCharter :ChartOptions = .oneWeek
     @EnvironmentObject var manager:HealthManager
     var body: some View {
         VStack{
             Chart{
-                ForEach(manager.oneMonthChartData){daily in
-                    BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount))}
-            }
+                if(selectedCharter == .oneMonth){
+                    ForEach(manager.oneMonthChartData){daily in
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount))}
+                }
+                if(selectedCharter == .oneWeek){
+                    ForEach(manager.pastWeekChartStepData){daily in
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount))}
+                }
+            }.padding().scaledToFit()
         }
-        .frame(height: 350).padding()
-        HStack{
-            Button("1M"){
-                selectedCharter = .oneMonth
-            }.padding(.all).foregroundColor(.green)
-        }.onAppear{print(manager.oneMonthChartData )}
+        
+        }
     }
-}
+

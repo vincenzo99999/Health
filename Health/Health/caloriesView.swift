@@ -4,7 +4,7 @@ import SwiftUI
 struct CaloriesView: View {
     @EnvironmentObject var manager: HealthManager
     @Environment(\.dismiss) private var dismiss
-
+    @State var selectedCharter :ChartOptions = .oneWeek
     var activity: Activity
 
     var body: some View {
@@ -24,12 +24,16 @@ struct CaloriesView: View {
                     }
                 }
                 .navigationBarHidden(true)
-
+        
                 ZStack {
                     Rectangle()
                         .frame(width: 400, height: 500)
-
-                    VStack {
+                    TabView(selection: $selectedCharter,
+                            content:  {
+                        Text("1W").tabItem { CaloriesChartView() }.tag(1)
+                        Text("1M").tabItem { CaloriesChartView() }.tag(2)
+                    })
+                    VStack (alignment: .leading){
                         HStack {
                             Text("\(activity.title)")
                                 .font(.title)
@@ -47,11 +51,7 @@ struct CaloriesView: View {
                                 .foregroundColor(.white)
                         }
 
-                        NavigationLink(destination: CaloriesChartView()) {
-                            Text("Chart")
-                                .foregroundColor(.white)
-                                .padding()
-                        }
+                        
                     }
                 }
             }
