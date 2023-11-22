@@ -22,7 +22,7 @@ struct StepsView: View {
                     }) {
                     label: do {
                         Image(systemName: "chevron.backward")
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.blue)
                             .font(.system(size: 30))
                             .frame(width: 35, height: 35)
                         Spacer()

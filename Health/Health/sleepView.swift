@@ -15,7 +15,7 @@ struct sleepView:View{
                     dismiss()
                 }){
                 label: do {
-                    Image(systemName: "chevron.backward").foregroundStyle(.black).font(.system(size: 30))
+                    Image(systemName: "chevron.backward").foregroundStyle(.blue).font(.system(size: 30))
                         .frame(width: 35, height: 35)
                     Spacer()
                 }}

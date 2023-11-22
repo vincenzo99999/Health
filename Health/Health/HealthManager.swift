@@ -57,7 +57,7 @@ class HealthManager: ObservableObject {
                 fetchTodaySteps()
                 fetchTodayCalories()
                 fetchLastNightSleep()
-                self.activities["audio Exposure"]=Activity(id:4,title: "Audio exposure",subtitle: "Goal:30%",image: "headphones",amount: "50%")
+                self.activities["audio Exposure"]=Activity(id:4,title: "Audio exposure",subtitle: "Goal:30%",image: "headphones",amount: "50%",color:.orange)
                 fetchPastOneMonthCaloriesData()
                 fetchPastOneMonthStepData()
                 fetchPastWeekStepData()
@@ -80,11 +80,11 @@ class HealthManager: ObservableObject {
             }
             
             let stepsCount = quantity.doubleValue(for: .count())
-            let activity = Activity(id: 0, title: "Steps", subtitle: "Goal: 10,000", image: "figure.walk", amount: stepsCount.formattedString())
-            let mockActivity = Activity(id: 0, title: "Steps", subtitle: "Goal: 10,000", image: "figure.walk", amount: "12,000")
+            let activity = Activity(id: 0, title: "Steps", subtitle: "Goal: 10,000", image: "figure.walk", amount: stepsCount.formattedString(),color: .cyan)
+           
             DispatchQueue.main.async {
                 self.activities["Steps"] = activity
-                self.mockActivities["Steps"]=mockActivity
+   
             }
         }
         
@@ -101,11 +101,10 @@ class HealthManager: ObservableObject {
             }
             
             let caloriesCount = quantity.doubleValue(for: .kilocalorie())
-            let activity = Activity(id: 1, title: "Calories", subtitle: "Goal: 500", image: "flame", amount: caloriesCount.formattedString())
-            let mockActivity = Activity(id: 1, title: "Calories", subtitle: "Goal: 500", image: "flame", amount: "230")
+            let activity = Activity(id: 1, title: "Calories", subtitle: "Goal: 500", image: "flame.fill", amount: caloriesCount.formattedString(),color: .red)
+            
             DispatchQueue.main.async {
                 self.activities["Calories"] = activity
-                self.mockActivities["Calories"]=mockActivity
             }
         }
         
@@ -151,7 +150,7 @@ class HealthManager: ObservableObject {
             
             print("Ore di sonno della scorsa notte: \(oreDormite) hours")
             
-            let activity = Activity(id: 2, title: "Sleep", subtitle: "Last Night", image: "moon", amount: "\(oreDormite) hours")
+            let activity = Activity(id: 2, title: "Sleep", subtitle: "Last Night", image: "moon.fill", amount: "\(oreDormite) hours",color:.purple)
             DispatchQueue.main.async {
                 self.activities["Sleep"] = activity
             }

@@ -30,9 +30,8 @@ struct CaloriesChartView: View {
                         BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount))
                     }
                 }
-            }.foregroundColor(.black)
+            }.foregroundColor(.red).background(.white)
                 .padding(.horizontal).scaledToFit()
-                
             }
             }
         }
