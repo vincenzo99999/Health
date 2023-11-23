@@ -57,7 +57,7 @@ class HealthManager: ObservableObject {
                 fetchTodaySteps()
                 fetchTodayCalories()
                 fetchLastNightSleep()
-                self.activities["audio Exposure"]=Activity(id:4,title: "Audio exposure",subtitle: "Goal:30%",image: "headphones",amount: "50%",color:.orange)
+                self.activities["audio Exposure"]=Activity(id:4,title: "Audio exposure",subtitle: "30%",image: "headphones",amount: "50%",color:.orange)
                 fetchPastOneMonthCaloriesData()
                 fetchPastOneMonthStepData()
                 fetchPastWeekStepData()
@@ -101,7 +101,7 @@ class HealthManager: ObservableObject {
             }
             
             let caloriesCount = quantity.doubleValue(for: .kilocalorie())
-            let activity = Activity(id: 1, title: "Calories", subtitle: "Goal: 500", image: "flame.fill", amount: caloriesCount.formattedString(),color: .red)
+            let activity = Activity(id: 1, title: "Calories", subtitle: "500", image: "flame.fill", amount: caloriesCount.formattedString(),color: .red)
             
             DispatchQueue.main.async {
                 self.activities["Calories"] = activity
@@ -150,7 +150,7 @@ class HealthManager: ObservableObject {
             
             print("Ore di sonno della scorsa notte: \(oreDormite) hours")
             
-            let activity = Activity(id: 2, title: "Sleep", subtitle: "Last Night", image: "moon.fill", amount: "\(oreDormite) hours",color:.purple)
+            let activity = Activity(id: 2, title: "Sleep", subtitle: "8 hours", image: "moon.fill", amount: "\(oreDormite) hours",color:.purple)
             DispatchQueue.main.async {
                 self.activities["Sleep"] = activity
             }
