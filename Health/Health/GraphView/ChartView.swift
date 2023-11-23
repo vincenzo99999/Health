@@ -4,7 +4,7 @@
 //
 //  Created by Vincenzo Eboli on 20/11/23.
 //
-
+import UIKit
 import Foundation
 import SwiftUI
 import Charts
@@ -27,15 +27,17 @@ struct ChartView:View {
             Chart{
                 if(selectedCharter == .oneMonth){
                     ForEach(manager.oneMonthChartData){daily in
-                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel("\(daily.stepCount) steps were taken on \(daily.date.formatted())")}
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel(String(format:"%.0f",daily.stepCount) + " steps were taken on \(daily.date.formatted())")}
+
                 }
                 if(selectedCharter == .oneWeek){
                     ForEach(manager.pastWeekChartStepData){daily in
-                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel("\(daily.stepCount) steps were taken on \(daily.date.formatted())")}
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel(String(format:"%.0f",daily.stepCount) + " steps were taken on \(daily.date.formatted())")}
                 }
                 if(selectedCharter == .oneYear){
                     ForEach(manager.pastYTDChartStepData){daily in
-                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel("\(daily.stepCount) steps were taken on \(daily.date.formatted())")}
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel(String(format:"%.0f",daily.stepCount) + " steps were taken on \(daily.date.formatted())")
+                    }
                 }
             }.padding().scaledToFit()
         }

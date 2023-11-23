@@ -16,20 +16,20 @@ struct CaloriesChartView: View {
             Chart {
                 if (selectedCharter == .oneMonth){
                     ForEach(manager.oneMonthChartCaloriesData) { daily in
-                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount)).accessibilityLabel("\(daily.caloriesCount) calories were burned on \(daily.date.formatted())")
+                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount)).accessibilityLabel(String(format:"%.0f",daily.caloriesCount) + " calories were burned on \(daily.date.formatted())")
                         
                     }
                 }
                 if (selectedCharter == .oneWeek){
                     ForEach(manager.pastWeekChartCaloriesData) { daily in
-                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount)).accessibilityLabel("\(daily.caloriesCount) calories were burned on \(daily.date.formatted())")
+                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount)).accessibilityLabel(String(format:"%.0f",daily.caloriesCount) + " calories were burned on \(daily.date.formatted())")
                             
                     }
 
                 }
                 if(selectedCharter == .oneYear){
                     ForEach(manager.pastYTDChartCaloriesData) { daily in
-                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount)).accessibilityLabel("\(daily.caloriesCount) calories were burned on \(daily.date.formatted())")
+                        BarMark(x: .value(daily.date.formatted(), daily.date, unit: .day), y: .value("calories", daily.caloriesCount)).accessibilityLabel(String(format:"%.0f",daily.caloriesCount) + " calories were burned on \(daily.date.formatted())")
                     }
                 }
             }.foregroundColor(.red).background(.white)
