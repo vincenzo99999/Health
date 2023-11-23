@@ -21,7 +21,7 @@ struct CaloriesView: View {
                                 .frame(width: 35, height: 35)
                             Spacer()
                         }
-                    }
+                    }.accessibilityLabel("back button")
                 }
                 .navigationBarHidden(true)
         
@@ -29,9 +29,9 @@ struct CaloriesView: View {
                     Rectangle().frame(width: 400, height: 500)
                     VStack {
                         Picker(selection: $selectedCharter, label: Text("")) {
-                            Text("1w").tag(ChartOptions.oneWeek)
-                            Text("1m").tag(ChartOptions.oneMonth)
-                            Text("ytd").tag(ChartOptions.oneYear)
+                            Text("one week burnt calories  chart").tag(ChartOptions.oneWeek).accessibilityLabel("one week burnt calories  chart")
+                            Text("one month burnt calories chart").tag(ChartOptions.oneMonth).accessibilityLabel("one month burnt calories  chart")
+                            Text("year to date calories chart").tag(ChartOptions.oneYear).accessibilityLabel("year to date burnt calories  chart")
                         }
                         .padding()
                         .pickerStyle(.segmented)

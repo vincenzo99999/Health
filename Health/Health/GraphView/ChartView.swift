@@ -27,15 +27,15 @@ struct ChartView:View {
             Chart{
                 if(selectedCharter == .oneMonth){
                     ForEach(manager.oneMonthChartData){daily in
-                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount))}
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel("\(daily.stepCount) steps were taken on \(daily.date.formatted())")}
                 }
                 if(selectedCharter == .oneWeek){
                     ForEach(manager.pastWeekChartStepData){daily in
-                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount))}
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel("\(daily.stepCount) steps were taken on \(daily.date.formatted())")}
                 }
                 if(selectedCharter == .oneYear){
                     ForEach(manager.pastYTDChartStepData){daily in
-                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount))}
+                        BarMark(x:.value(daily.date.formatted(), daily.date,unit: .day),y:.value("steps", daily.stepCount)).accessibilityLabel("\(daily.stepCount) steps were taken on \(daily.date.formatted())")}
                 }
             }.padding().scaledToFit()
         }

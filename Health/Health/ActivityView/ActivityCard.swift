@@ -16,7 +16,7 @@ struct ActivityCard: View {
     var body: some View {
 
         ZStack {
-            RoundedRectangle(cornerRadius: 20.0).frame(width: 380,height:100).foregroundColor(.white)                .onTapGesture
+            RoundedRectangle(cornerRadius: 20.0).frame(width: 380,height:100).foregroundColor(.white).accessibilityLabel(activity.title+" card")                .onTapGesture
             {
                 isDetailViewPresented.toggle()
             }
@@ -55,11 +55,11 @@ struct ActivityCard: View {
                         
                         if activity.id==0{
                             
-                            StepsView(activity: activity)
+                            StepsView(activity: activity).accessibilityLabel("Steps Charts")
                             
                         }
                         if activity.id==1{
-                            CaloriesView(activity: activity)
+                            CaloriesView(activity: activity).accessibilityLabel("Steps Charts")
                         }
                         if activity.id==2{
                             sleepView(activity: activity)

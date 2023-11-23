@@ -51,11 +51,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		54A7ED772B0F54520080482D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				54AB93622B02BA8800026DA0 /* ContentView.swift */,
+				54E9EF122B050807004BA61B /* HealthTabView.swift */,
+				54E9EF162B050E97004BA61B /* HomeView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		54A7ED782B0F547B0080482D /* ActivityView */ = {
+			isa = PBXGroup;
+			children = (
+				54E9EF142B050993004BA61B /* ActivityCard.swift */,
+				545FD9FE2B07C91400716C3F /* sleepView.swift */,
+				545FD9F82B07C07D00716C3F /* stepsView.swift */,
+				545FD9FC2B07C8D800716C3F /* caloriesView.swift */,
+			);
+			path = ActivityView;
+			sourceTree = "<group>";
+		};
+		54A7ED792B0F54AE0080482D /* GraphView */ = {
+			isa = PBXGroup;
+			children = (
+				5496F71C2B0B66F800AAA9BC /* ChartView.swift */,
+				546BF7522B0BB12A007E9261 /* CaloriesChartView.swift */,
+			);
+			path = GraphView;
+			sourceTree = "<group>";
+		};
 		54AB93542B02BA8800026DA0 = {
 			isa = PBXGroup;
 			children = (
-				546BF7522B0BB12A007E9261 /* CaloriesChartView.swift */,
-				5496F71C2B0B66F800AAA9BC /* ChartView.swift */,
 				54AB935F2B02BA8800026DA0 /* Health */,
 				54AB935E2B02BA8800026DA0 /* Products */,
 			);
@@ -73,15 +101,11 @@
 			isa = PBXGroup;
 			children = (
 				544279582B051870001BF50F /* Health.entitlements */,
-				54AB93622B02BA8800026DA0 /* ContentView.swift */,
-				54E9EF122B050807004BA61B /* HealthTabView.swift */,
 				544279562B051423001BF50F /* HealthApp.swift */,
-				54E9EF162B050E97004BA61B /* HomeView.swift */,
-				54E9EF142B050993004BA61B /* ActivityCard.swift */,
-				545FD9FE2B07C91400716C3F /* sleepView.swift */,
-				545FD9FC2B07C8D800716C3F /* caloriesView.swift */,
-				545FD9F82B07C07D00716C3F /* stepsView.swift */,
 				544279542B0511EF001BF50F /* HealthManager.swift */,
+				54A7ED792B0F54AE0080482D /* GraphView */,
+				54A7ED772B0F54520080482D /* Views */,
+				54A7ED782B0F547B0080482D /* ActivityView */,
 				54AB93662B02BA8900026DA0 /* Assets.xcassets */,
 				54AB93682B02BA8900026DA0 /* Preview Content */,
 			);

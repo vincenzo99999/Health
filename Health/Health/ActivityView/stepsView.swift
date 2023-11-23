@@ -28,15 +28,15 @@ struct StepsView: View {
                         Spacer()
                     }
                     }
-                }
+                }.accessibilityLabel("back button ")
                 
                 ZStack {
                     Rectangle().frame(width: 400, height: 500)
                     VStack {
                         Picker(selection: $selectedCharter, label: Text("")) {
-                            Text("1w").tag(ChartOptions.oneWeek)
-                            Text("1m").tag(ChartOptions.oneMonth)
-                            Text("ytd").tag(ChartOptions.oneYear)
+                            Text(" one week steps chart").tag(ChartOptions.oneWeek)
+                            Text("one  month steps chart").tag(ChartOptions.oneMonth)
+                            Text("year to date steps chart").tag(ChartOptions.oneYear)
                         }
                         .padding()
                         .pickerStyle(.segmented)
